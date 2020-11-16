@@ -9,8 +9,8 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) {
     if (json != null) {
       return Category(
-        categoryId: json['id'],
-        name: json['name']
+        categoryId: json['id'] as String,
+        name: json['name'] as String,
       );
     } else {
       return null;
