@@ -30,15 +30,19 @@ class UserApi {
   }
 }
 
-enum Intent { checkin, browse }
+enum Intent { checkin, browse, global }
 
 extension IntentExt on Intent {
   String get value {
     switch (this) {
       case Intent.checkin:
         return "checkin";
-      default:
+      case Intent.browse:
         return "browse";
+      case Intent.global:
+        return "global";
+      default:
+        throw "Unknown extent";
     }
   }
 }
@@ -54,6 +58,11 @@ class VenueApi {
 
   Future<Location> _resolveLocation(double lat, double lon) async {
     return Location.nullable(lat: lat, lon: lon) ?? await api.currentLocation;
+  }
+
+  Future<List<FoursquareCategory>> categories() async {
+    List items = (await api.get('venues/categories'))['categories'] as List;
+    return items.map((item) => FoursquareCategory.fromJson(item)).toList();
   }
 
   Future<List<Venue>> search(

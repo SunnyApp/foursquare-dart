@@ -196,49 +196,53 @@ class FoursquareImage {
 }
 
 class FoursquareCategory {
-  final String id; // = "4bf58dd8d48988d1c1941735"
-  final String name; // = "Mexican Restaurant"
-  final String pluralName; // = "Mexican Restaurants"
+  final String id;
+  final String name;
+  final String pluralName;
   final String shortName;
+  final List<FoursquareCategory> categories;
 
-  const FoursquareCategory({
-    @required this.id,
-    @required this.name,
-    @required this.pluralName,
-    @required this.shortName,
-    @required this.icon,
-    @required this.primary,
-  });
+// = "Mexican"
+//   final FoursquareImage icon; //": {
+//   final bool primary;
 
-  static FoursquareCategory fromMap(map) {
-    return FoursquareCategory(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      pluralName: map['pluralName'] as String,
-      shortName: map['shortName'] as String,
-      icon: FoursquareImage.fromMap(map['icon']),
-      primary: map['primary'] as bool,
-    );
+  static FoursquareCategory fromJson(json) {
+    if (json != null && json is Map<String, dynamic>) {
+      return FoursquareCategory(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        pluralName: json['pluralName'] as String,
+        shortName: json['shortName'] as String,
+        categories: [
+          ...(json['categories'] as List ?? [])
+              .map((e) => FoursquareCategory.fromJson(e))
+        ],
+      );
+    } else {
+      return null;
+    }
   }
+
+  FoursquareCategory(
+      {this.id,
+      this.name,
+      this.pluralName,
+      this.shortName,
+      this.categories = const []});
 
   Map<String, dynamic> toMap() {
     // ignore: unnecessary_cast
-    return {
+    return <String, dynamic>{
       'id': this.id,
       'name': this.name,
       'pluralName': this.pluralName,
       'shortName': this.shortName,
-      'icon': this.icon,
-      'primary': this.primary,
+      'categories': this.categories.map((e) => e.toMap()),
     } as Map<String, dynamic>;
   }
 
-  // = "Mexican"
-  final FoursquareImage icon; //": {
-  final bool primary;
-
   static List<FoursquareCategory> fromList(dynamic d) {
-    final l = ((d ?? []) as List).cast<Map<String, dynamic>>();
-    return l.map(FoursquareCategory.fromMap).toList();
+    final l = ((d ?? <dynamic>[]) as List).cast<Map<String, dynamic>>();
+    return l.map(FoursquareCategory.fromJson).toList();
   }
 }
